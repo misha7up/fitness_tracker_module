@@ -21,8 +21,7 @@ class InfoMessage:
                                    self.distance, self.speed, self.calories)
 
     def get_message(self) -> str:
-        return self.MESSAGE.format(self.training_type, self.duration,
-                                   self.distance, self.speed, self.calories)
+        return self.__str__()
 
 
 @dataclass
@@ -40,8 +39,7 @@ class Training:
         """Получить дистанцию в км."""
         return self.action * self.LEN_STEP / self.M_IN_KM
 
-    def get_mean_speed(self, action: int = None,
-                       duration: float = None) -> float:
+    def get_mean_speed(self) -> float:
         """Получить среднюю скорость в км/ч."""
         return self.get_distance() / self.duration
 
@@ -51,11 +49,9 @@ class Training:
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
-        message = InfoMessage(type(self).__name__, self.duration,
-                              self.get_distance(), self.get_mean_speed(),
-                              self.get_spent_calories())
-
-        return message
+        return InfoMessage(type(self).__name__, self.duration,
+                           self.get_distance(), self.get_mean_speed(),
+                           self.get_spent_calories())
 
 
 class Running(Training):
@@ -111,13 +107,12 @@ class Swimming(Training):
         self.length_pool = length_pool
         self.count_pool = count_pool
 
-    def get_mean_speed(self, action: int = None,
-                       duration: float = None) -> float:
+    def get_mean_speed(self) -> float:
         return (self.length_pool * self.count_pool
                 / super().M_IN_KM / self.duration)
 
     def get_spent_calories(self) -> float:
-        return ((self.get_mean_speed(self.action, self.duration)
+        return ((self.get_mean_speed()
                 + self.SPEED_OFFSET) * self.SPEED_MULTIPLIER
                 * self.weight * self.duration)
 
