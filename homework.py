@@ -45,7 +45,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        pass  # mypy ругается на empty body :(
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -126,8 +126,7 @@ def read_package(workout_type: str, data: list) -> Training:
 
 def main(training: Training) -> None:
     """Главная функция."""
-    info = training
-    print(info.show_training_info())
+    print(training.show_training_info())
 
 
 if __name__ == '__main__':
