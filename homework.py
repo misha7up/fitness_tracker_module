@@ -45,7 +45,8 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass  # mypy ругается на empty body :(
+        return (f'Запрошенный метод get_spent_calories() не описан в '
+                 'родительском классе. Его необходимо переопределить.')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
