@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
+from typing import Any
 
 
 @dataclass
@@ -10,18 +11,14 @@ class InfoMessage:
     speed: float
     calories: float
 
-    MESSAGE = ('Тип тренировки: {}; '
-               'Длительность: {:.3f} ч.; '
-               'Дистанция: {:.3f} км; '
-               'Ср. скорость: {:.3f} км/ч; '
-               'Потрачено ккал: {:.3f}.')
-
-    def __str__(self) -> str:
-        return self.MESSAGE.format(self.training_type, self.duration,
-                                   self.distance, self.speed, self.calories)
+    message = ('Тип тренировки: {training_type}; '
+               'Длительность: {duration:.3f} ч.; '
+               'Дистанция: {distance:.3f} км; '
+               'Ср. скорость: {speed:.3f} км/ч; '
+               'Потрачено ккал: {calories:.3f}.')
 
     def get_message(self) -> str:
-        return self.__str__()
+        return self.message.format(**asdict(self))
 
 
 @dataclass
@@ -43,10 +40,10 @@ class Training:
         """Получить среднюю скорость в км/ч."""
         return self.get_distance() / self.duration
 
-    def get_spent_calories(self) -> float:
+    def get_spent_calories(self) -> Any:
         """Получить количество затраченных калорий."""
         raise NotImplementedError(
-              'Метод get_spent_calories не определен.'
+              'Определите get_spent_calories в %s.' % (self.__class__.__name__)
               )
 
     def show_training_info(self) -> InfoMessage:
@@ -144,18 +141,20 @@ class Swimming(Training):
                 * self.weight * self.duration)
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: list[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    workout_dict: dict = {'SWM': Swimming,
-                          'RUN': Running, 'WLK': SportsWalking}
-    if workout_type not in workout_dict:
-        raise KeyError(f'Тип тренировки не найден: {workout_type}')
-    return workout_dict[workout_type](*data)
+    workouts: dict[str, type[Training]] = {'SWM': Swimming,
+                                           'RUN': Running,
+                                           'WLK': SportsWalking}
+    try:
+        return workouts[workout_type](*data)
+    except KeyError:
+        raise KeyError(f'Тип тренировки "{workout_type}" не найден!')
 
 
 def main(training: Training) -> None:
     """Главная функция."""
-    print(training.show_training_info())
+    print(training.show_training_info().get_message())
 
 
 if __name__ == '__main__':
