@@ -1,5 +1,4 @@
 from dataclasses import dataclass, asdict
-from typing import Any
 
 
 @dataclass
@@ -40,7 +39,7 @@ class Training:
         """Получить среднюю скорость в км/ч."""
         return self.get_distance() / self.duration
 
-    def get_spent_calories(self) -> Any:
+    def get_spent_calories(self) -> None:
         """Получить количество затраченных калорий."""
         raise NotImplementedError(
               'Определите get_spent_calories в %s.' % (self.__class__.__name__)
@@ -141,15 +140,14 @@ class Swimming(Training):
                 * self.weight * self.duration)
 
 
-def read_package(workout_type: str, data: list[int]) -> Training:
+def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
     workouts: dict[str, type[Training]] = {'SWM': Swimming,
                                            'RUN': Running,
                                            'WLK': SportsWalking}
-    try:
+    if workout_type in workouts:
         return workouts[workout_type](*data)
-    except KeyError:
-        raise KeyError(f'Тип тренировки "{workout_type}" не найден!')
+    raise KeyError(f'Тип тренировки "{workout_type}" не найден!')
 
 
 def main(training: Training) -> None:
